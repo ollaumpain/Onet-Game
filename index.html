@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onet Connect English - 100+ Vocabulary Adventure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: #fcf8f2; 
+    }
+    
+    /* Elegant Pastel Background Gradients */
+    .bg-landing { 
+      background: radial-gradient(circle at top left, #e0f2fe, #fffbeb 80%); 
+    }
+    .bg-game-theme {
+      background: radial-gradient(circle at bottom right, #fef2f2, #f0fdf4 90%);
+    }
+
+    /* Custom scrollbars for Vocab Book */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(241, 245, 249, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Tile pop in & out effects */
+    @keyframes tilePop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .tile-anim {
+      animation: tilePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    /* Sparkle particle styles */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+      animation: blowOut 0.6s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+    }
+    @keyframes blowOut {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden min-h-screen">
+
+  <!-- ================= LANDING SCREEN ================= -->
+  <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 bg-landing transition-all duration-500">
+    <div class="max-w-2xl w-full bg-white/90 backdrop-blur-lg p-8 rounded-[2rem] shadow-2xl border border-white/60 relative overflow-hidden">
+      <!-- Decor Circles -->
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-200/40 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-rose-200/40 rounded-full blur-2xl"></div>
+
+      <div class="relative z-10">
+        <!-- Cute Mascot Header -->
+        <div class="w-24 h-24 bg-gradient-to-tr from-indigo-400 to-violet-500 rounded-3xl mx-auto flex items-center justify-center text-5xl shadow-lg shadow-indigo-200 mb-6 transform hover:rotate-6 transition-transform">
+          🎓
+        </div>
+        
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-800 tracking-tight leading-tight mb-2">
+          Onet Connect <span class="bg-gradient-to-r from-indigo-500 to-violet-600 bg-clip-text text-transparent">English 100+</span>
+        </h1>
+        <p class="text-indigo-600 font-bold tracking-wider uppercase text-xs mb-4">Learn Vocabulary through Gameplay</p>
+        
+        <p class="text-slate-600 max-w-md mx-auto mb-8 text-sm sm:text-base leading-relaxed">
+          Hubungkan ubin kosakata bahasa Inggris yang sama dengan jalur maksimal 2 tikungan. Temukan kecocokan, pelajari arti kata, dengarkan pelafalannya, dan kuasai 100+ kosakata seru!
+        </p>
+
+        <!-- Menu Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+          <button onclick="startGame()" class="flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-2xl font-bold transition-all shadow-lg hover:shadow-indigo-300 active:scale-95 text-lg">
+            <i class="fa-solid fa-play"></i> Mulai Main
+          </button>
+          <button onclick="openLibrary()" class="flex items-center justify-center gap-3 py-4 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 rounded-2xl font-bold transition-all active:scale-95 text-lg">
+            <i class="fa-solid fa-book-open text-indigo-500"></i> Kamus Kata (100+)
+          </button>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 flex justify-center gap-6 text-xs text-slate-400 font-medium">
+          <span><i class="fa-solid fa-bolt text-amber-500"></i> Berbasis Jalur Onet</span>
+          <span><i class="fa-solid fa-volume-high text-indigo-400"></i> Fitur Audio TTS</span>
+          <span><i class="fa-solid fa-trophy text-yellow-500"></i> Sistem Skor & Combo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= GAME UI SCREEN ================= -->
+  <div id="gameUI" class="hidden min-h-screen flex-col items-center justify-start p-4 pb-12 select-none bg-game-theme relative">
+    
+    <!-- Game Header Navigation -->
+    <header class="w-full max-w-6xl flex justify-between items-center py-3 mb-4 border-b border-slate-200/50">
+      <button onclick="quitToMainMenu()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 bg-white/80 border rounded-xl hover:shadow-sm transition-all flex items-center gap-2">
+        <i class="fa-solid fa-arrow-left"></i> Menu Utama
+      </button>
+      
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🎓</span>
+        <span class="text-xl font-black text-slate-800 hidden sm:inline">Onet English</span>
+      </div>
+
+      <button onclick="toggleMute()" id="muteBtn" class="w-10 h-10 rounded-xl bg-white flex items-center justify-center border text-slate-600 hover:text-slate-800 hover:shadow-sm transition-all">
+        <i class="fa-solid fa-volume-high text-lg"></i>
+      </button>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+      
+      <!-- LEFT PANEL: Stats & Action Tools -->
+      <section class="lg:col-span-1 bg-white/80 backdrop-blur-md rounded-3xl p-5 shadow-md border border-white/80 flex flex-col gap-5">
+        <!-- Live Category Selector -->
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Kategori Kosakata</label>
+          <div class="relative">
+            <select id="categorySelect" onchange="changeCategory(this.value)" class="w-full bg-white border-2 border-slate-100 hover:border-slate-200 p-3 rounded-2xl text-slate-700 font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400 appearance-none text-sm shadow-sm">
+              <option value="animals">🐾 Animals (Hewan)</option>
+              <option value="fruits">🍓 Fruits & Vegetables (Buah & Sayur)</option>
+              <option value="colors">🎨 Colors & Shapes (Warna & Bentuk)</option>
+              <option value="household">🏠 Home & School (Benda Sekitar)</option>
+              <option value="vehicles">🚗 Vehicles & Travel (Kendaraan)</option>
+              <option value="food">🍕 Food & Drinks (Makanan & Minuman)</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+              <i class="fa-solid fa-chevron-down text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Realtime Match Stats -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/60 text-center">
+            <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Skor Kamu</div>
+            <div id="score" class="text-3xl font-black text-indigo-600">0</div>
+          </div>
+          <div class="bg-rose-50/50 p-4 rounded-2xl border border-rose-100/60 text-center relative overflow-hidden">
+            <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Sisa Waktu</div>
+            <div id="time" class="text-3xl font-black text-rose-600">300s</div>
+            <!-- Danger warning flash indicator -->
+            <div id="timeWarning" class="absolute inset-0 bg-red-500/10 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Combo Streak Bar -->
+        <div class="bg-amber-50/40 p-3 rounded-2xl border border-amber-100/50">
+          <div class="flex justify-between text-xs font-bold text-amber-700 mb-1">
+            <span>🔥 Combo Streak</span>
+            <span id="comboMultiplier">x1.0</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="comboBar" class="bg-gradient-to-r from-amber-400 to-orange-500 h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Interactive Game Tool Helpers -->
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+          <button onclick="triggerHint()" class="flex flex-col items-center justify-center p-3 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-700 border border-emerald-100 rounded-2xl font-bold transition-all active:scale-95 group relative">
+            <i class="fa-solid fa-lightbulb text-xl mb-1 group-hover:scale-110 transition-transform"></i>
+            <span class="text-xs">Hint Petunjuk</span>
+            <span id="hintCount" class="absolute -top-2 -right-2 bg-emerald-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">3</span>
+          </button>
+          <button onclick="triggerShuffle()" class="flex flex-col items-center justify-center p-3 bg-violet-50 hover:bg-violet-100/80 text-violet-700 border border-violet-100 rounded-2xl font-bold transition-all active:scale-95 group relative">
+            <i class="fa-solid fa-shuffle text-xl mb-1 group-hover:rotate-45 transition-transform"></i>
+            <span class="text-xs">Acak Ubin</span>
+            <span id="shuffleCount" class="absolute -top-2 -right-2 bg-violet-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">3</span>
+          </button>
+        </div>
+
+        <!-- Educational Sidebar Quick Info -->
+        <div class="p-3.5 bg-slate-50 border rounded-2xl text-xs text-slate-500 space-y-2">
+          <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-question text-indigo-500 mr-1"></i> Cara Bermain Onet:</p>
+          <ul class="list-disc pl-4 space-y-1">
+            <li>Klik dua ubin dengan ikon yang sama untuk mencocokkan.</li>
+            <li>Jalur koneksi tidak boleh terhalang ubin lain.</li>
+            <li>Jalur hanya boleh berbelok maksimal 2 kali (3 garis lurus).</li>
+            <li>Gunakan <b>Hint</b> jika kesulitan mencari ubin kosong yang cocok!</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Interactive Onet Game Board -->
+      <section class="lg:col-span-3 flex flex-col items-center">
+        <!-- Responsive Board Wrapper -->
+        <div class="w-full bg-white/70 backdrop-blur-md rounded-[2rem] p-4 sm:p-6 shadow-xl border border-white/80 relative">
+          
+          <!-- Board SVG Connector Path Overlay -->
+          <svg id="connectionSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"></svg>
+          
+          <!-- Loading Board Spinner Cover -->
+          <div id="boardLoading" class="absolute inset-0 bg-white/90 z-30 flex flex-col items-center justify-center rounded-[2rem] transition-all duration-300 opacity-0 pointer-events-none">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent mb-3"></div>
+            <span class="text-sm font-bold text-indigo-600">Menyusun Ubin Kosakata...</span>
+          </div>
+
+          <!-- Dynamic Adaptive Grid Board -->
+          <div class="overflow-auto max-w-full">
+            <div id="board" class="grid select-none justify-center mx-auto" style="grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 0.25rem;">
+              <!-- Dynamic Tiles generated via JS -->
+            </div>
+          </div>
+
+          <!-- Board footer stats info -->
+          <div class="mt-4 flex flex-wrap justify-between items-center text-xs text-slate-400 gap-2 px-1">
+            <div>💡 Tip: Jika jalan buntu dan sisa ubin terkunci, game akan otomatis mengacak papan ubin!</div>
+            <div class="font-semibold text-slate-500">Pasangan Tersisa: <span id="pairsLeft" class="text-indigo-600 font-extrabold">-</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= DIALOG / POPUP MODALS ================= -->
+
+  <!-- Vocabulary Match Success Popup (Edu Panel) -->
+  <div id="popup" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-[2.5rem] p-8 shadow-2xl max-w-md w-full mx-4 text-center border-4 border-indigo-100 transform scale-95 transition-all duration-300 relative">
+      <!-- Top Success Icon Badge -->
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-gradient-to-tr from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-5xl shadow-xl border-4 border-white animate-bounce">
+        🌟
+      </div>
+      
+      <div class="pt-10">
+        <div id="eduText" class="text-slate-700 space-y-4">
+          <!-- Dynamic edu info injected here -->
+        </div>
+        
+        <div class="mt-6 flex flex-col gap-2">
+          <button onclick="closePopup()" class="w-full py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-bold hover:shadow-lg active:scale-95 transition-all text-base flex items-center justify-center gap-2">
+            Lanjutkan Game <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over & High Score Victory Dialog -->
+  <div id="gameOverPopup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-[2.5rem] p-8 shadow-2xl max-w-lg w-full mx-4 text-center border-4 border-indigo-400 relative">
+      <div id="gameOverEmoji" class="text-7xl mb-4">🏆</div>
+      <h2 id="gameOverTitle" class="text-3xl font-black text-slate-800 mb-2">Papan Selesai!</h2>
+      <p id="gameOverMsg" class="text-slate-500 mb-6 max-w-sm mx-auto text-sm">Hebat! Kamu berhasil mencocokkan seluruh kosakata bahasa Inggris dan mengasah memorimu.</p>
+      
+      <!-- Stats Summary Board -->
+      <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-8 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div class="text-center">
+          <span class="block text-xs text-slate-400 font-bold uppercase tracking-wide">Total Skor</span>
+          <span id="finalScore" class="text-3xl font-black text-indigo-600">0</span>
+        </div>
+        <div class="text-center">
+          <span class="block text-xs text-slate-400 font-bold uppercase tracking-wide">Sisa Waktu</span>
+          <span id="finalTime" class="text-3xl font-black text-emerald-600">0s</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button onclick="restart()" class="flex-1 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 text-base flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rotate-left"></i> Main Lagi
+        </button>
+        <button onclick="quitToMainMenu()" class="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all active:scale-95 text-base">
+          Menu Utama
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Vocabulary Dictionary / Library Screen -->
+  <div id="libraryPage" class="hidden min-h-screen flex-col items-center justify-start p-4 bg-slate-50">
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-xl border border-slate-200/60 p-6 sm:p-8 mt-4">
+      
+      <!-- Header of Lib -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b pb-5">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-indigo-500"></i> Kamus Kosakata Onet (100+)
+          </h2>
+          <p class="text-slate-500 text-sm">Lihat semua kosakata bahasa Inggris lengkap dengan suara, contoh kalimat dan artinya.</p>
+        </div>
+        <button onclick="closeLibrary()" class="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-all active:scale-95 text-sm">
+          Kembali ke Menu
+        </button>
+      </div>
+
+      <!-- Live Search & Category Filter -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        <div class="relative md:col-span-2">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="libSearchInput" oninput="filterLibrary()" placeholder="Cari kosakata en / id..." class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        </div>
+        <select id="libCategorySelect" onchange="filterLibrary()" class="p-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white">
+          <option value="all">Semua Kategori</option>
+          <option value="animals">🐾 Animals</option>
+          <option value="fruits">🍓 Fruits & Veggies</option>
+          <option value="colors">🎨 Colors</option>
+          <option value="household">🏠 House & School</option>
+          <option value="vehicles">🚗 Vehicles</option>
+          <option value="food">🍕 Food & Drinks</option>
+        </select>
+      </div>
+
+      <!-- Dictionary Items Grid -->
+      <div id="libraryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[550px] overflow-y-auto pr-2 pb-6">
+        <!-- Dynamically populated via script -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================= GLOBAL CONFIG & VOCAB DATABASE =================
+    // Containing exactly 120 words distributed evenly across 6 major categories (20 words per category)
+    const categories = {
+      animals: [
+        {icon:"🐶", en:"dog", id:"anjing", sent:"The dog is loyal.", trans:"Anjing itu setia."},
+        {icon:"🐱", en:"cat", id:"kucing", sent:"The cat likes to drink fresh milk.", trans:"Kucing suka minum susu segar."},
+        {icon:"🐭", en:"mouse", id:"tikus", sent:"A mouse is tiny and runs fast.", trans:"Tikus itu kecil dan berlari cepat."},
+        {icon:"🐰", en:"rabbit", id:"kelinci", sent:"The rabbit eats sweet carrots.", trans:"Kelinci makan wortel yang manis."},
+        {icon:"🦊", en:"fox", id:"rubah", sent:"The red fox is smart and clever.", trans:"Rubah merah itu pintar dan cerdik."},
+        {icon:"🐻", en:"bear", id:"beruang", sent:"The brown bear loves to eat salmon.", trans:"Beruang cokelat suka makan salmon."},
+        {icon:"🦁", en:"lion", id:"singa", sent:"The lion roars very loudly.", trans:"Singa mengaum dengan sangat keras."},
+        {icon:"🐸", en:"frog", id:"katak", sent:"The green frog jumps very high.", trans:"Katak hijau melompat sangat tinggi."},
+        {icon:"🐷", en:"pig", id:"babi", sent:"The pink pig plays in the mud.", trans:"Babi merah muda itu bermain di lumpur."},
+        {icon:"🐔", en:"chicken", id:"ayam", sent:"The chicken lays fresh eggs every morning.", trans:"Ayam bertelur segar setiap pagi."},
+        {icon:"🦒", en:"giraffe", id:"jerapah", sent:"The giraffe is the tallest land animal.", trans:"Jerapah adalah hewan darat tertinggi."},
+        {icon:"🐘", en:"elephant", id:"gajah", sent:"The gray elephant has a long trunk.", trans:"Gajah abu-abu itu memiliki belalai panjang."},
+        {icon:"🐎", en:"horse", id:"kuda", sent:"My dad can ride a horse swiftly.", trans:"Ayahku bisa menunggang kuda dengan cepat."},
+        {icon:"🦓", en:"zebra", id:"zebra", sent:"A zebra has beautiful black and white stripes.", trans:"Zebra memiliki garis hitam dan putih yang indah."},
+        {icon:"🐄", en:"cow", id:"sapi", sent:"The cow gives us fresh milk.", trans:"Sapi memberi kita susu segar."},
+        {icon:"🐑", en:"sheep", id:"domba", sent:"The sheep is fluffy and soft.", trans:"Domba itu empuk dan berbulu lembut."},
+        {icon:"duck", icon:"🦆", en:"duck", id:"bebek", sent:"The yellow duck swims elegantly in the pond.", trans:"Bebek kuning berenang dengan anggun di kolam."},
+        {icon:"🦉", en:"owl", id:"burung hantu", sent:"The owl hunts silently at night.", trans:"Burung hantu berburu dengan tenang di malam hari."},
+        {icon:"🐢", en:"turtle", id:"kura-kura", sent:"The green turtle is steady and slow.", trans:"Kura-kura hijau itu stabil dan lambat."},
+        {icon:"🐍", en:"snake", id:"ular", sent:"The snake slides quietly through the grass.", trans:"Ular itu meluncur diam-diam di antara rumput."}
+      ],
+      fruits: [
+        {icon:"🍎", en:"apple", id:"apel", sent:"An apple a day keeps the doctor away.", trans:"Satu apel sehari membuat kita tetap sehat."},
+        {icon:"🍌", en:"banana", id:"pisang", sent:"Monkeys love eating yellow bananas.", trans:"Monyet sangat suka makan pisang kuning."},
+        {icon:"🍉", en:"watermelon", id:"semangka", sent:"Watermelon is juicy and perfect for summer.", trans:"Semangka berair banyak dan cocok untuk musim panas."},
+        {icon:"🍇", en:"grape", id:"anggur", sent:"Grapes are sweet and grow on vines.", trans:"Anggur itu manis dan tumbuh merambat."},
+        {icon:"🍓", en:"strawberry", id:"stroberi", sent:"Strawberry is red and slightly sour.", trans:"Stroberi itu merah dan sedikit asam."},
+        {icon:"🍊", en:"orange", id:"jeruk", sent:"Orange juice has high vitamin C.", trans:"Jus jeruk memiliki kandungan vitamin C yang tinggi."},
+        {icon:"🍍", en:"pineapple", id:"nanas", sent:"Pineapple is sweet and has a golden crown.", trans:"Nanas itu manis dan memiliki mahkota emas."},
+        {icon:"🥭", en:"mango", id:"mangga", sent:"The ripe mango is sweet and yellow.", trans:"Mangga yang matang itu manis dan kuning."},
+        {icon:"🥑", en:"avocado", id:"alpukat", sent:"Avocado has a creamy and buttery texture.", trans:"Alpukat memiliki tekstur yang lembut seperti mentega."},
+        {icon:"🍒", en:"cherry", id:"ceri", sent:"Put a red cherry on top of the cake.", trans:"Taruh ceri merah di atas kue."},
+        {icon:"kiwi", icon:"🥝", en:"kiwi", id:"kiwi", sent:"Kiwi fruit is green inside and fuzzy outside.", trans:"Buah kiwi berwarna hijau di dalam dan berbulu di luar."},
+        {icon:"🥥", en:"coconut", id:"kelapa", sent:"Coconut water is very refreshing.", trans:"Air kelapa sangat menyegarkan."},
+        {icon:"melon", icon:"🍈", en:"melon", id:"melon", sent:"Melon is juicy and sweet.", trans:"Melon itu kaya air dan rasanya manis."},
+        {icon:"🍅", en:"tomato", id:"tomat", sent:"Tomato is legally a fruit, but treated as a veggie.", trans:"Secara ilmiah tomat adalah buah, tapi diolah sebagai sayur."},
+        {icon:"🥦", en:"broccoli", id:"brokoli", sent:"Green broccoli looks like small trees.", trans:"Brokoli hijau terlihat seperti pohon-pohon kecil."},
+        {icon:"🥕", en:"carrot", id:"wortel", sent:"Carrot is good for maintaining eye health.", trans:"Wortel sangat baik untuk menjaga kesehatan mata."},
+        {icon:"🥔", en:"potato", id:"kentang", sent:"Mashed potato is a popular side dish.", trans:"Kentang tumbuk adalah hidangan sampingan yang populer."},
+        {icon:"🍆", en:"eggplant", id:"terung", sent:"Eggplant is shiny purple.", trans:"Terung berwarna ungu berkilau."},
+        {icon:"🌽", en:"corn", id:"jagung", sent:"Sweet corn is delicious when grilled.", trans:"Jagung manis rasanya lezat ketika dipanggang."},
+        {icon:"cucumber", icon:"🥒", en:"cucumber", id:"timun", sent:"Cucumber tastes cool and refreshing.", trans:"Timun rasanya dingin dan menyegarkan."}
+      ],
+      colors: [
+        {icon:"🔴", en:"red", id:"merah", sent:"Red is the color of blood and fire.", trans:"Merah adalah warna darah dan api."},
+        {icon:"🔵", en:"blue", id:"biru", sent:"The clear sky has a bright blue color.", trans:"Langit yang cerah memiliki warna biru terang."},
+        {icon:"🟢", en:"green", id:"hijau", sent:"Green leaves absorb sunlight.", trans:"Daun hijau menyerap sinar matahari."},
+        {icon:"🟡", en:"yellow", id:"kuning", sent:"The shining sun is a bright yellow.", trans:"Matahari yang bersinar berwarna kuning cerah."},
+        {icon:"🟣", en:"purple", id:"ungu", sent:"Purple was once a color of royalty.", trans:"Ungu dulu merupakan warna keluarga kerajaan."},
+        {icon:"🟠", en:"orange", id:"jingga", sent:"An orange sunset is peaceful to watch.", trans:"Matahari terbenam yang jingga sangat damai untuk ditonton."},
+        {icon:"⚫", en:"black", id:"hitam", sent:"The ink in my pen is black.", trans:"Tinta di penaku berwarna hitam."},
+        {icon:"⚪", en:"white", id:"putih", sent:"Fluffy white clouds float in the atmosphere.", trans:"Awan putih yang empuk melayang di atmosfer."},
+        {icon:"🟤", en:"brown", id:"cokelat", sent:"The wooden table is solid brown.", trans:"Meja kayu itu berwarna cokelat padat."},
+        {icon:"💗", en:"pink", id:"merah muda", sent:"Pink cherry blossoms bloom in spring.", trans:"Bunga sakura merah muda mekar di musim semi."},
+        {icon:"🩶", en:"gray", id:"abu-abu", sent:"A stormy raincloud is deep gray.", trans:"Awan hujan badai berwarna abu-abu pekat."},
+        {icon:"💎", en:"cyan", id:"sian", sent:"Cyan is a shade between green and blue.", trans:"Sian adalah warna di antara hijau dan biru."},
+        {icon:"🍃", en:"lime", id:"limau", sent:"Lime green is a very vibrant and neon color.", trans:"Hijau limau adalah warna yang sangat cerah dan terang."},
+        {icon:"🌊", en:"teal", id:"teal", sent:"Teal matches the ocean water.", trans:"Warna teal cocok dengan air laut."},
+        {icon:"👑", en:"gold", id:"emas", sent:"The royal crown is made of pure gold.", trans:"Mahkota kerajaan terbuat dari emas murni."},
+        {icon:"💍", en:"silver", id:"perak", sent:"This silver ring sparkles in the light.", trans:"Cincin perak ini berkilau di bawah cahaya."},
+        {icon:"🦄", en:"magenta", id:"magenta", sent:"Magenta is a beautiful purplish-red color.", trans:"Magenta adalah warna merah keunguan yang indah."},
+        {icon:"🌿", en:"olive", id:"hijau zaitun", sent:"Olive green is common in military uniforms.", trans:"Hijau zaitun sering dipakai di seragam militer."},
+        {icon:"🔥", en:"maroon", id:"marun", sent:"The curtains have a dark maroon hue.", trans:"Tirai tersebut memiliki corak merah marun yang gelap."},
+        {icon:"🌑", en:"charcoal", id:"abu arang", sent:"Charcoal gray is almost as dark as black.", trans:"Abu arang hampir sama gelapnya dengan warna hitam."}
+      ],
+      household: [
+        {icon:"🛋️", en:"sofa", id:"sofa", sent:"The living room has a soft blue sofa.", trans:"Ruang tamu itu memiliki sofa biru lembut."},
+        {icon:"🚪", en:"door", id:"pintu", sent:"Please knock before opening the door.", trans:"Tolong ketuk sebelum membuka pintu."},
+        {icon:"📖", en:"book", id:"buku", sent:"I love reading this historical book.", trans:"Saya suka membaca buku sejarah ini."},
+        {icon:"🔑", en:"key", id:"kunci", sent:"The key is made of brass.", trans:"Kunci itu terbuat dari kuningan."},
+        {icon:"⏰", en:"clock", id:"jam beker", sent:"The alarm clock rang at 6 AM.", trans:"Jam beker berdering jam 6 pagi."},
+        {icon:"🪑", en:"chair", id:"kursi", sent:"Please sit on this comfortable wooden chair.", trans:"Silakan duduk di kursi kayu yang nyaman ini."},
+        {icon:"🍽️", en:"plate", id:"piring", sent:"She placed a clean plate on the table.", trans:"Dia meletakkan piring bersih di atas meja."},
+        {icon:"💡", en:"lamp", id:"lampu", sent:"Turn on the desk lamp when studying.", trans:"Nyalakan lampu meja saat belajar."},
+        {icon:"🧹", en:"broom", id:"sapu", sent:"Use the straw broom to clean the kitchen floor.", trans:"Gunakan sapu jerami untuk membersihkan lantai dapur."},
+        {icon:"🧺", en:"basket", id:"keranjang", sent:"Put your dirty laundry in the laundry basket.", trans:"Taruh cucian kotormu di dalam keranjang cucian."},
+        {icon:"🧼", en:"soap", id:"sabun", sent:"Wash your hands with soap and clean water.", trans:"Cuci tanganmu dengan sabun dan air bersih."},
+        {icon:"🧴", en:"shampoo", id:"sampo", sent:"This herbal shampoo smells like lavender.", trans:"Sampo herbal ini wangi seperti lavender."},
+        {icon:"🥄", en:"spoon", id:"sendok", sent:"Use a soup spoon for the soup.", trans:"Gunakan sendok sup untuk kuahnya."},
+        {icon:"🍴", en:"fork", id:"garpu", sent:"Use a fork to spin the spaghetti.", trans:"Gunakan garpu untuk memutar spageti."},
+        {icon:"🔪", en:"knife", id:"pisau", sent:"Be careful, that kitchen knife is very sharp.", trans:"Hati-hati, pisau dapur itu sangat tajam."},
+        {icon:"📺", en:"television", id:"televisi", sent:"We watch the news on the television.", trans:"Kami menonton berita di televisi."},
+        {icon:"📱", en:"phone", id:"telepon", sent:"My smartphone is connected to the wifi.", trans:"Ponsel pintarku tersambung ke wifi."},
+        {icon:"💻", en:"laptop", id:"laptop", sent:"I use my laptop for remote school.", trans:"Saya menggunakan laptop untuk sekolah jarak jauh."},
+        {icon:"🖊️", en:"pen", id:"pena", sent:"Sign the paper with a black ink pen.", trans:"Tandatangani kertas dengan pena tinta hitam."},
+        {icon:"📝", en:"paper", id:"kertas", sent:"Write your exam on a clean sheet of paper.", trans:"Tulis ujianmu di selembar kertas bersih."}
+      ],
+      vehicles: [
+        {icon:"🚗", en:"car", id:"mobil", sent:"My father drives a red electric car.", trans:"Ayahku mengendarai mobil listrik merah."},
+        {icon:"🚲", en:"bicycle", id:"sepeda", sent:"Riding a bicycle is a great exercise.", trans:"Mengendarai sepeda adalah latihan yang bagus."},
+        {icon:"🛵", en:"scooter", id:"skuter", sent:"He rides a motor scooter to work.", trans:"Dia mengendarai skuter motor ke kantor."},
+        {icon:"🚌", en:"bus", id:"bus", sent:"We wait for the school bus at the stop.", trans:"Kami menunggu bus sekolah di halte."},
+        {icon:"🚂", en:"train", id:"kereta", sent:"The steam train moves along the steel track.", trans:"Kereta uap bergerak di sepanjang jalur baja."},
+        {icon:"✈️", en:"airplane", id:"pesawat", sent:"An airplane flies high above the clouds.", trans:"Pesawat terbang tinggi di atas awan."},
+        {icon:"🚁", en:"helicopter", id:"helikopter", sent:"The rescue helicopter landed on the hospital roof.", trans:"Helikopter penyelamat mendarat di atap rumah sakit."},
+        {icon:"🚢", en:"ship", id:"kapal laut", sent:"A massive cargo ship crossed the ocean.", trans:"Kapal kargo besar menyeberangi lautan."},
+        {icon:"⛵", en:"sailboat", id:"perahu layar", sent:"The sailboat uses wind power to move.", trans:"Perahu layar menggunakan tenaga angin untuk bergerak."},
+        {icon:"🚑", en:"ambulance", id:"ambulans", sent:"The ambulance rushed the patient with sirens on.", trans:"Ambulans melarikan pasien dengan sirene menyala."},
+        {icon:"🚒", en:"fire truck", id:"pemadam", sent:"The red fire truck carries water hoses.", trans:"Mobil pemadam merah membawa selang-selang air."},
+        {icon:"🚓", en:"police car", id:"mobil polisi", sent:"A police car is patrolling the neighborhood.", trans:"Mobil polisi sedang berpatroli di lingkungan sekitar."},
+        {icon:"🚜", en:"tractor", id:"traktor", sent:"The farmer uses a tractor to plow the field.", trans:"Petani menggunakan traktor untuk membajak sawah."},
+        {icon:"🚀", en:"rocket", id:"roket", sent:"The heavy rocket is launching into space.", trans:"Roket berat itu diluncurkan ke luar angkasa."},
+        {icon:"🛶", en:"canoe", id:"kano", sent:"We paddled a wooden canoe down the river.", trans:"Kami mendayung kano kayu menyusuri sungai."},
+        {icon:"🛺", en:"auto rickshaw", id:"bajaj", sent:"The auto rickshaw is a popular local transport.", trans:"Bajaj adalah transportasi lokal yang populer."},
+        {icon:"🚚", en:"truck", id:"truk", sent:"A delivery truck carries boxes to the warehouse.", trans:"Truk pengiriman membawa kotak-kotak ke gudang."},
+        {icon:"🏍️", en:"motorcycle", id:"sepeda motor", sent:"Always wear a helmet when riding a motorcycle.", trans:"Selalu pakai helm saat naik sepeda motor."},
+        {icon:"🛹", en:"skateboard", id:"papan luncur", sent:"He practiced skateboard tricks at the park.", trans:"Dia berlatih trik papan luncur di taman."},
+        {icon:"🛸", en:"flying saucer", id:"piring terbang", sent:"The science fiction movie features a flying saucer.", trans:"Film fiksi ilmiah menampilkan piring terbang."}
+      ],
+      food: [
+        {icon:"🍕", en:"pizza", id:"piza", sent:"Italian pizza has cheese toppings.", trans:"Piza Italia memiliki pugasan keju."},
+        {icon:"🍔", en:"hamburger", id:"hamburger", sent:"A hamburger has a juicy beef patty.", trans:"Hamburger memiliki patty daging sapi yang berair."},
+        {icon:"🌭", en:"hot dog", id:"sosis panggang", sent:"He put mustard on his grilled hot dog.", trans:"Dia menaruh moster di atas sosis panggangnya."},
+        {icon:"🍟", en:"french fries", id:"kentang goreng", sent:"French fries are crispy and salted.", trans:"Kentang goreng terasa renyah dan asin."},
+        {icon:"🥪", en:"sandwich", id:"roti lapis", sent:"I packed a ham and cheese sandwich for lunch.", trans:"Saya membungkus roti lapis daging dan keju untuk makan siang."},
+        {icon:"🍳", en:"egg", id:"telur", sent:"A fried egg is perfect with hot white rice.", trans:"Telur goreng sangat cocok dipadu dengan nasi putih hangat."},
+        {icon:"🥞", en:"pancake", id:"panekuk", sent:"We eat soft pancakes with maple syrup.", trans:"Kami makan panekuk lembut dengan sirup maple."},
+        {icon:"🧀", en:"cheese", id:"keju", sent:"The cheese is yellow and smells rich.", trans:"Keju itu berwarna kuning dan berbau gurih."},
+        {icon:"🥗", en:"salad", id:"selada", sent:"A fresh green salad with olive oil dressing.", trans:"Selada hijau segar dengan saus minyak zaitun."},
+        {icon:"🍜", en:"noodle", id:"mi", sent:"The hot chicken noodle soup is delicious.", trans:"Sup mi ayam hangat itu rasanya sangat lezat."},
+        {icon:"🍣", en:"sushi", id:"sushi", sent:"Sushi is a traditional Japanese food.", trans:"Sushi adalah makanan tradisional Jepang."},
+        {icon:"🍩", en:"donut", id:"donat", sent:"A sweet donut with chocolate glaze and sprinkles.", trans:"Donat manis dengan lapisan cokelat dan meses."},
+        {icon:"🍰", en:"cake", id:"kue", sent:"This strawberry shortcake is soft and sweet.", trans:"Kue stroberi ini terasa lembut dan manis."},
+        {icon:"🍿", en:"popcorn", id:"berondong jagung", sent:"We bought sweet popcorn for the cinema.", trans:"Kami membeli berondong jagung manis untuk bioskop."},
+        {icon:"🍫", en:"chocolate", id:"cokelat batang", sent:"A dark chocolate bar is good for mood boost.", trans:"Cokelat batang hitam baik untuk meningkatkan suasana hati."},
+        {icon:"🥛", en:"milk", id:"susu", sent:"Drink a glass of warm milk before sleep.", trans:"Minum segelas susu hangat sebelum tidur."},
+        {icon:"☕", en:"coffee", id:"kopi", sent:"My dad drinks black coffee with no sugar.", trans:"Ayahku minum kopi hitam tanpa gula."},
+        {icon:"🍵", en:"tea", id:"teh", sent:"Green tea contains many rich antioxidants.", trans:"Teh hijau mengandung banyak antioksidan yang kaya."},
+        {icon:"🧃", en:"juicebox", id:"jus kotak", sent:"The sweet juicebox has apple flavor.", trans:"Jus kotak manis itu memiliki rasa apel."},
+        {icon:"🧊", en:"ice", id:"es", sent:"Put an ice cube in my mango drink.", trans:"Taruh kubus es di minuman manggaku."}
+      ]
+    };
+
+    // ================= SOUND ENGINE (Web Audio API Synthesizer) =================
+    const AudioEngine = {
+      ctx: null,
+      muted: false,
+      init() {
+        try {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {
+          console.warn("Web Audio API not supported in this environment.", e);
+        }
+      },
+      play(type) {
+        if (this.muted || !this.ctx) return;
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        const now = this.ctx.currentTime;
+
+        if (type === 'select') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        } 
+        else if (type === 'success') {
+          // Double note chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.setValueAtTime(0.2, now + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        }
+        else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+        else if (type === 'shuffle') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(200, now);
+          osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+        else if (type === 'hint') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+        else if (type === 'victory') {
+          // Play a sweet celebratory arpeggio: C major chord
+          const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 1046.50];
+          notes.forEach((freq, idx) => {
+            const toneOsc = this.ctx.createOscillator();
+            const toneGain = this.ctx.createGain();
+            toneOsc.connect(toneGain);
+            toneGain.connect(this.ctx.destination);
+            toneOsc.type = 'triangle';
+            toneOsc.frequency.setValueAtTime(freq, now + (idx * 0.1));
+            toneGain.gain.setValueAtTime(0.15, now + (idx * 0.1));
+            toneGain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.1) + 0.4);
+            toneOsc.start(now + (idx * 0.1));
+            toneOsc.stop(now + (idx * 0.1) + 0.45);
+          });
+        }
+        else if (type === 'gameover') {
+          // Sadly falling sound
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.linearRampToValueAtTime(80, now + 0.6);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+          osc.start(now);
+          osc.stop(now + 0.6);
+        }
+      }
+    };
+
+    // Initialize audio on first user touch / click
+    window.addEventListener('click', () => {
+      if(!AudioEngine.ctx) AudioEngine.init();
+    }, { once: true });
+
+    function toggleMute() {
+      AudioEngine.muted = !AudioEngine.muted;
+      const icon = document.getElementById("muteBtn").querySelector("i");
+      if (AudioEngine.muted) {
+        icon.className = "fa-solid fa-volume-xmark text-lg text-rose-500 animate-pulse";
+      } else {
+        icon.className = "fa-solid fa-volume-high text-lg text-emerald-500";
+        if (AudioEngine.ctx) AudioEngine.ctx.resume();
+      }
+    }
+
+
+    // ================= STATE MANAGEMENT =================
+    let currentCategory = "animals";
+    let score = 0;
+    let timeLeft = 300;
+    let timer = null;
+    let comboStreak = 0;
+    let comboTimer = null;
+    let hintLeft = 3;
+    let shuffleLeft = 3;
+
+    // Grid Dimensions
+    // Standard Onet configuration: 6 rows, 10 columns = 60 cards (30 pairs)
+    const ROWS = 6;
+    const COLS = 10;
+    
+    // Grid representation
+    // To allow paths going around the board layout, we add an empty margin of index around active cells.
+    // Active rows: 1 to ROWS, Active cols: 1 to COLS.
+    // Full Grid dimension is (ROWS + 2) x (COLS + 2) which are initially completely empty buffers (0-padded).
+    let grid = []; 
+    let firstSelectedTile = null;
+
+    // ================= APP FLOWS =================
+    function startGame() {
+      document.getElementById("landingPage").classList.add("hidden");
+      document.getElementById("libraryPage").classList.add("hidden");
+      document.getElementById("gameUI").classList.remove("hidden");
+      document.getElementById("gameUI").classList.add("flex");
+      
+      restart();
+    }
+
+    function quitToMainMenu() {
+      clearInterval(timer);
+      clearInterval(comboTimer);
+      document.getElementById("gameUI").classList.remove("flex");
+      document.getElementById("gameUI").classList.add("hidden");
+      document.getElementById("libraryPage").classList.add("hidden");
+      document.getElementById("landingPage").classList.remove("hidden");
+      document.getElementById("landingPage").classList.add("flex");
+    }
+
+    function restart() {
+      clearInterval(timer);
+      clearInterval(comboTimer);
+      
+      score = 0;
+      timeLeft = 300;
+      comboStreak = 0;
+      hintLeft = 3;
+      shuffleLeft = 3;
+      firstSelectedTile = null;
+      
+      document.getElementById("score").innerText = score;
+      document.getElementById("time").innerText = timeLeft + "s";
+      document.getElementById("hintCount").innerText = hintLeft;
+      document.getElementById("shuffleCount").innerText = shuffleLeft;
+      document.getElementById("comboBar").style.width = "0%";
+      document.getElementById("comboMultiplier").innerText = "x1.0";
+      
+      buildGameBoard();
+      
+      // Start Game Loop Timer
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time").innerText = timeLeft + "s";
+        
+        // Time warning flashes
+        const timeBox = document.getElementById("timeWarning");
+        if (timeLeft <= 30) {
+          timeBox.style.opacity = timeLeft % 2 === 0 ? "0.6" : "0.1";
+        } else {
+          timeBox.style.opacity = "0";
+        }
+        
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          triggerGameOver(false);
+        }
+      }, 1000);
+    }
+
+
+    // ================= GAMEPLAY / TRUE ONET CONNECT LOGIC =================
+    
+    // Create connection array and randomize item positions ensuring even matchable distribution
+    function buildGameBoard() {
+      const loading = document.getElementById("boardLoading");
+      loading.classList.remove("opacity-0", "pointer-events-none");
+
+      setTimeout(() => {
+        const dataSet = categories[currentCategory];
+        
+        // We need 60 tiles (30 pairs) total.
+        // There are 20 unique cards in each category. We will draw 30 pairs.
+        // To get 30 pairs, we can include the 20 items and choose 10 random additional duplicate pairs.
+        let uniqueList = [...dataSet];
+        let extraPairsCount = (ROWS * COLS) / 2 - uniqueList.length; // 30 - 20 = 10 extra pairs
+        
+        // Sample extra items
+        let extraList = [];
+        for (let i = 0; i < extraPairsCount; i++) {
+          extraList.push(dataSet[i % dataSet.length]);
+        }
+        
+        const originalPairs = [...uniqueList, ...extraList];
+        
+        // Create matching twin sets
+        let totalTilesList = [];
+        originalPairs.forEach((item, index) => {
+          // Provide unique IDs so we can pair and trace correctly
+          totalTilesList.push({ ...item, id: index * 2 });
+          totalTilesList.push({ ...item, id: index * 2 + 1 });
+        });
+        
+        // Fully shuffle the 60 items
+        totalTilesList.sort(() => Math.random() - 0.5);
+
+        // Build grid structure of size (ROWS + 2) x (COLS + 2)
+        grid = Array(ROWS + 2).fill(null).map(() => Array(COLS + 2).fill(null));
+
+        let index = 0;
+        for (let r = 1; r <= ROWS; r++) {
+          for (let c = 1; c <= COLS; c++) {
+            grid[r][c] = totalTilesList[index++];
+          }
+        }
+
+        renderBoardHTML();
+        loading.classList.add("opacity-0", "pointer-events-none");
+        
+        // Auto-check if first setup has solvable routes, shuffle if not
+        validateBoardStalemate();
+      }, 350);
+    }
+
+    // Convert internal virtual grid data into DOM layout
+    function renderBoardHTML() {
+      const boardElement = document.getElementById("board");
+      boardElement.innerHTML = "";
+      
+      // Update template style grids to fit properly
+      boardElement.style.gridTemplateRows = `repeat(${ROWS}, minmax(0, 1fr))`;
+      boardElement.style.gridTemplateColumns = `repeat(${COLS}, minmax(0, 1fr))`;
+
+      // Draw only the active 1 to ROWS, 1 to COLS
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          const item = grid[r][c];
+          const tile = document.createElement("button");
+          tile.id = `tile_${r}_${c}`;
+          
+          if (item) {
+            tile.className = "aspect-square bg-white rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-1 text-slate-800 shadow-sm border border-indigo-100 hover:border-indigo-300 hover:shadow-md transition-all active:scale-95 text-lg sm:text-2xl cursor-pointer select-none relative tile-anim transform duration-200 z-10";
+            
+            // Render beautiful tile: Icon + English abbreviation or word
+            tile.innerHTML = `
+              <span class="text-xl sm:text-3xl filter drop-shadow-sm">${item.icon}</span>
+              <span class="text-[9px] sm:text-[11px] font-extrabold tracking-wide text-slate-600 block mt-0.5 truncate max-w-full uppercase">${item.en}</span>
+            `;
+            
+            // Tile Interactions
+            tile.onclick = (e) => onTileClicked(r, c, tile);
+          } else {
+            // Placeholder empty space to maintain stable Onet path calculations
+            tile.className = "aspect-square pointer-events-none opacity-0 invisible";
+            tile.innerHTML = "";
+          }
+          boardElement.appendChild(tile);
+        }
+      }
+      
+      updatePairsCount();
+    }
+
+    // Update remaining matches info label
+    function updatePairsCount() {
+      let count = 0;
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          if (grid[r][c]) count++;
+        }
+      }
+      document.getElementById("pairsLeft").innerText = count / 2;
+    }
+
+    // Select actions & Match Logic
+    function onTileClicked(r, c, tileElement) {
+      AudioEngine.play('select');
+      
+      if (!firstSelectedTile) {
+        // First selection
+        firstSelectedTile = { r, c, el: tileElement };
+        tileElement.classList.add("ring-4", "ring-indigo-500", "scale-105", "z-20", "bg-indigo-50");
+      } else {
+        // Second selection
+        const prev = firstSelectedTile;
+        
+        // Clicked same item? Deselect
+        if (prev.r === r && prev.c === c) {
+          deselectFirst();
+          return;
+        }
+
+        const item1 = grid[prev.r][prev.c];
+        const item2 = grid[r][c];
+
+        // Do they share the same English vocab/word definition?
+        if (item1.en === item2.en) {
+          // Check true Onet pathfinding connection (max 2 turns)
+          const path = findOnetPath(prev.r, prev.c, r, c);
+          
+          if (path) {
+            // MATCH SUCCESS!
+            AudioEngine.play('success');
+            
+            // Draw visually pleasing Onet path line over the board grid
+            drawConnectionPath(path);
+            
+            // Sparkles match particle explosion
+            createMatchParticles(prev.el);
+            createMatchParticles(tileElement);
+
+            // Empty slots in grid
+            grid[prev.r][prev.c] = null;
+            grid[r][c] = null;
+
+            // Delayed clean UI removal
+            setTimeout(() => {
+              renderBoardHTML();
+              clearConnectionPath();
+              
+              // Increment Score with Streak
+              handleScoreIncrement();
+              
+              // Open English Educational Vocabulary Popup Card
+              openEduPopup(item1);
+              
+              // Clear state selection
+              firstSelectedTile = null;
+
+              // Validate if board is empty (victory) or stuck
+              checkBoardState();
+            }, 300);
+
+          } else {
+            // Mismatch path error
+            playMismatchFeedback(prev.el, tileElement);
+          }
+        } else {
+          // Words totally different
+          playMismatchFeedback(prev.el, tileElement);
+        }
+      }
+    }
+
+    function deselectFirst() {
+      if (firstSelectedTile) {
+        firstSelectedTile.el.classList.remove("ring-4", "ring-indigo-500", "scale-105", "z-20", "bg-indigo-50");
+        firstSelectedTile = null;
+      }
+    }
+
+    function playMismatchFeedback(el1, el2) {
+      AudioEngine.play('error');
+      el1.classList.add("border-rose-400", "bg-rose-50", "animate-shake");
+      el2.classList.add("border-rose-400", "bg-rose-50", "animate-shake");
+      
+      setTimeout(() => {
+        el1.classList.remove("border-rose-400", "bg-rose-50", "animate-shake");
+        el2.classList.remove("border-rose-400", "bg-rose-50", "animate-shake");
+        deselectFirst();
+      }, 400);
+    }
+
+    // Interactive Streak Multiplier Management
+    function handleScoreIncrement() {
+      // Reward based on rapid streak combos
+      comboStreak++;
+      if (comboStreak > 10) comboStreak = 10;
+      
+      const multiplier = 1 + (comboStreak * 0.1);
+      const pointsAdded = Math.round(10 * multiplier);
+      score += pointsAdded;
+      
+      document.getElementById("score").innerText = score;
+      document.getElementById("comboMultiplier").innerText = `x${multiplier.toFixed(1)}`;
+      
+      // Animate progress streak bar
+      const bar = document.getElementById("comboBar");
+      bar.style.width = `${comboStreak * 10}%`;
+
+      // Reset combo timer (players have 8 seconds to match another card to chain combo)
+      clearInterval(comboTimer);
+      comboTimer = setTimeout(() => {
+        decayCombo();
+      }, 8000);
+    }
+
+    function decayCombo() {
+      comboStreak = 0;
+      document.getElementById("comboBar").style.width = "0%";
+      document.getElementById("comboMultiplier").innerText = "x1.0";
+    }
+
+
+    // ================= TRACING ONET PATHFINDING ALGORITHM =================
+    // Helper to evaluate if path from node A to node B is a clean direct line with no obstacles
+    function isRowEmpty(c1, c2, r) {
+      const start = Math.min(c1, c2);
+      const end = Math.max(c1, c2);
+      for (let c = start + 1; c < end; c++) {
+        if (grid[r][c] !== null) return false;
+      }
+      return true;
+    }
+
+    function isColEmpty(r1, r2, c) {
+      const start = Math.min(r1, r2);
+      const end = Math.max(r1, r2);
+      for (let r = start + 1; r < end; r++) {
+        if (grid[r][c] !== null) return false;
+      }
+      return true;
+    }
+
+    // Main search function returning array of points representing the optimal matching path lines
+    function findOnetPath(r1, c1, r2, c2) {
+      // 1. Direct path (no turns)
+      if (r1 === r2 && isRowEmpty(c1, c2, r1)) {
+        return [{r: r1, c: c1}, {r: r2, c: c2}];
+      }
+      if (c1 === c2 && isColEmpty(r1, r2, c1)) {
+        return [{r: r1, c: c1}, {r: r2, c: c2}];
+      }
+
+      // 2. Paths with exactly 1 turn (using Corner points)
+      // Corner 1: (r1, c2)
+      if (grid[r1][c2] === null && isRowEmpty(c1, c2, r1) && isColEmpty(r1, r2, c2)) {
+        return [{r: r1, c: c1}, {r: r1, c: c2}, {r: r2, c: c2}];
+      }
+      // Corner 2: (r2, c1)
+      if (grid[r2][c1] === null && isColEmpty(r1, r2, c1) && isRowEmpty(c1, c2, r2)) {
+        return [{r: r1, c: c1}, {r: r2, c: c1}, {r: r2, c: c2}];
+      }
+
+      // 3. Paths with 2 turns (using dual horizontal/vertical scanline scans)
+      // Horizontal scanning
+      for (let c = 0; c < COLS + 2; c++) {
+        if (c === c1 || c === c2) continue;
+        
+        // Check if horizontal intermediate points are passable empty cells
+        const t1 = {r: r1, c: c};
+        const t2 = {r: r2, c: c};
+        
+        // Target slots must be empty
+        if (grid[r1][c] === null && grid[r2][c] === null) {
+          // Check connections: A -> T1, T1 -> T2, T2 -> B
+          if (isRowEmpty(c1, c, r1) && isColEmpty(r1, r2, c) && isRowEmpty(c, c2, r2)) {
+            return [{r: r1, c: c1}, t1, t2, {r: r2, c: c2}];
+          }
+        }
+      }
+
+      // Vertical scanning
+      for (let r = 0; r < ROWS + 2; r++) {
+        if (r === r1 || r === r2) continue;
+
+        const t1 = {r: r, c: c1};
+        const t2 = {r: r, c: c2};
+
+        if (grid[r][c1] === null && grid[r][c2] === null) {
+          // Check connections: A -> T1, T1 -> T2, T2 -> B
+          if (isColEmpty(r1, r, c1) && isRowEmpty(c1, c2, r) && isColEmpty(r, r2, c2)) {
+            return [{r: r1, c: c1}, t1, t2, {r: r2, c: c2}];
+          }
+        }
+      }
+
+      return null; // No valid matching path found
+    }
+
+
+    // ================= GRAPHICAL PATH CONNECTION RENDERER =================
+    // Draw real-time SVGs tracking the path of the Onet connect match
+    function drawConnectionPath(points) {
+      const svg = document.getElementById("connectionSvg");
+      svg.innerHTML = "";
+      
+      const boardBounds = document.getElementById("board").getBoundingClientRect();
+      const svgBounds = svg.getBoundingClientRect();
+
+      let pointsString = "";
+      
+      points.forEach((pt, index) => {
+        // Check coordinates relative to active viewport elements on screen
+        let cx, cy;
+        
+        const cell = document.getElementById(`tile_${pt.r}_${pt.c}`);
+        if (cell) {
+          const rect = cell.getBoundingClientRect();
+          cx = rect.left + rect.width / 2 - svgBounds.left;
+          cy = rect.top + rect.height / 2 - svgBounds.top;
+        } else {
+          // Calculating empty border indices outside the real grids boundary
+          // We extrapolate positions based on adjacent grid spacing cells
+          const colWidth = boardBounds.width / COLS;
+          const rowHeight = boardBounds.height / ROWS;
+          
+          cx = boardBounds.left + (pt.c - 0.5) * colWidth - svgBounds.left;
+          cy = boardBounds.top + (pt.r - 0.5) * rowHeight - svgBounds.top;
+        }
+
+        pointsString += `${cx},${cy} `;
+      });
+
+      // Create beautiful neon-styled polyline
+      const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      polyline.setAttribute("points", pointsString.trim());
+      polyline.setAttribute("stroke", "#6366f1"); // Indigo theme highlight glow
+      polyline.setAttribute("stroke-width", "5");
+      polyline.setAttribute("stroke-linecap", "round");
+      polyline.setAttribute("stroke-linejoin", "round");
+      polyline.setAttribute("fill", "none");
+      polyline.setAttribute("class", "animate-pulse");
+      
+      // Shadow layer
+      const polylineGlow = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      polylineGlow.setAttribute("points", pointsString.trim());
+      polylineGlow.setAttribute("stroke", "#a5b4fc");
+      polylineGlow.setAttribute("stroke-width", "10");
+      polylineGlow.setAttribute("stroke-linecap", "round");
+      polylineGlow.setAttribute("stroke-linejoin", "round");
+      polylineGlow.setAttribute("fill", "none");
+      polylineGlow.setAttribute("opacity", "0.5");
+
+      svg.appendChild(polylineGlow);
+      svg.appendChild(polyline);
+    }
+
+    function clearConnectionPath() {
+      document.getElementById("connectionSvg").innerHTML = "";
+    }
+
+
+    // ================= GAME HELPER TOOLS (SHUFFLE & HINTS) =================
+    
+    // Find matching Onet pairs currently accessible on board
+    function findAllMatches() {
+      let solutions = [];
+      
+      // Dual scan combinations
+      for (let r1 = 1; r1 <= ROWS; r1++) {
+        for (let c1 = 1; c1 <= COLS; c1++) {
+          const t1 = grid[r1][c1];
+          if (!t1) continue;
+
+          for (let r2 = 1; r2 <= ROWS; r2++) {
+            for (let c2 = 1; c2 <= COLS; c2++) {
+              if (r1 === r2 && c1 === c2) continue;
+              const t2 = grid[r2][c2];
+              if (!t2) continue;
+
+              // Check match and accessible route
+              if (t1.en === t2.en) {
+                const path = findOnetPath(r1, c1, r2, c2);
+                if (path) {
+                  solutions.push({ p1: {r: r1, c: c1}, p2: {r: r2, c: c2}, path });
+                }
+              }
+            }
+          }
+        }
+      }
+      return solutions;
+    }
+
+    function triggerHint() {
+      if (hintLeft <= 0) return;
+      
+      const solutions = findAllMatches();
+      if (solutions.length > 0) {
+        AudioEngine.play('hint');
+        hintLeft--;
+        document.getElementById("hintCount").innerText = hintLeft;
+
+        const best = solutions[0];
+        
+        // Highlight matching elements visually
+        const el1 = document.getElementById(`tile_${best.p1.r}_${best.p1.c}`);
+        const el2 = document.getElementById(`tile_${best.p2.r}_${best.p2.c}`);
+
+        if (el1 && el2) {
+          el1.classList.add("ring-4", "ring-emerald-400", "scale-105", "animate-bounce");
+          el2.classList.add("ring-4", "ring-emerald-400", "scale-105", "animate-bounce");
+          
+          setTimeout(() => {
+            el1.classList.remove("ring-4", "ring-emerald-400", "scale-105", "animate-bounce");
+            el2.classList.remove("ring-4", "ring-emerald-400", "scale-105", "animate-bounce");
+          }, 3000);
+        }
+      } else {
+        // Inform user no matches left, auto-trigger shuffle
+        triggerShuffle(true);
+      }
+    }
+
+    function triggerShuffle(free = false) {
+      if (!free && shuffleLeft <= 0) return;
+      
+      AudioEngine.play('shuffle');
+      if (!free) {
+        shuffleLeft--;
+        document.getElementById("shuffleCount").innerText = shuffleLeft;
+      }
+
+      // Extract all remaining tiles
+      let itemsLeft = [];
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          if (grid[r][c]) {
+            itemsLeft.push(grid[r][c]);
+            grid[r][c] = null;
+          }
+        }
+      }
+
+      // Re-shuffle list
+      itemsLeft.sort(() => Math.random() - 0.5);
+
+      // Re-fill grid structure empty gaps
+      let index = 0;
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          if (index < itemsLeft.length) {
+            grid[r][c] = itemsLeft[index++];
+          }
+        }
+      }
+
+      renderBoardHTML();
+      deselectFirst();
+      
+      // Double check deadlock again
+      validateBoardStalemate();
+    }
+
+    // Stalemate autocheck
+    function validateBoardStalemate() {
+      let activeCount = 0;
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          if (grid[r][c]) activeCount++;
+        }
+      }
+      
+      if (activeCount === 0) return; // empty board, let checkBoardState handle win
+
+      const solutions = findAllMatches();
+      if (solutions.length === 0) {
+        // Stalemate detected (no valid connect paths exist)
+        // Shuffle silently
+        setTimeout(() => {
+          triggerShuffle(true);
+        }, 800);
+      }
+    }
+
+    // Check match completion
+    function checkBoardState() {
+      let activeCount = 0;
+      for (let r = 1; r <= ROWS; r++) {
+        for (let c = 1; c <= COLS; c++) {
+          if (grid[r][c]) activeCount++;
+        }
+      }
+
+      if (activeCount === 0) {
+        clearInterval(timer);
+        triggerGameOver(true);
+      } else {
+        validateBoardStalemate();
+      }
+    }
+
+
+    // ================= VISUALS & ANIMATIONS =================
+
+    // Satisfying sparkle explosion matches
+    function createMatchParticles(element) {
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      const parent = document.body;
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.backgroundColor = ["#6366f1", "#10b981", "#f59e0b", "#ec4899"][Math.floor(Math.random() * 4)];
+        particle.style.width = `${Math.random() * 8 + 4}px`;
+        particle.style.height = particle.style.width;
+        
+        // Random directions
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 80 + 40;
+        particle.style.setProperty("--tx", `${Math.cos(angle) * speed}px`);
+        particle.style.setProperty("--ty", `${Math.sin(angle) * speed}px`);
+
+        parent.appendChild(particle);
+        setTimeout(() => particle.remove(), 600);
+      }
+    }
+
+
+    // ================= INTERACTIVE STUDY & AUDIO VOICE POPUP =================
+    
+    // Play Native Speech synthesis
+    function speak(word) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // cancel current speech
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85; // slightly slower for better learning intake
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.warn("TTS speech synthesis is not supported on your browser.");
+      }
+    }
+
+    function openEduPopup(item) {
+      const modal = document.getElementById("popup");
+      const textContainer = document.getElementById("eduText");
+      
+      textContainer.innerHTML = `
+        <div class="inline-flex items-center justify-center p-3 bg-indigo-50 rounded-2xl mb-1 mt-4">
+          <span class="text-6xl">${item.icon}</span>
+        </div>
+        <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-none">${item.en}</h3>
+        <p class="text-indigo-600 font-extrabold text-lg mt-0.5">${item.id}</p>
+        
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-left space-y-2 mt-4 shadow-inner">
+          <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Contoh Kalimat:</div>
+          <p class="text-slate-700 italic font-medium">"${item.sent}"</p>
+          <div class="h-px bg-slate-200/60 my-2"></div>
+          <p class="text-slate-500 text-xs">${item.trans}</p>
+        </div>
+
+        <button onclick="speak('${item.en.replace("'", "\\'")}')" class="w-full py-3 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 text-indigo-700 rounded-xl font-bold transition-all text-sm flex items-center justify-center gap-2 mt-2">
+          <i class="fa-solid fa-volume-high text-indigo-500"></i> Dengarkan Pengucapan
+        </button>
+      `;
+
+      modal.classList.remove("opacity-0", "pointer-events-none");
+      modal.querySelector(".transform").classList.remove("scale-95");
+      modal.querySelector(".transform").classList.add("scale-100");
+      
+      // Auto speech playback
+      setTimeout(() => {
+        speak(item.en);
+      }, 400);
+    }
+
+    function closePopup() {
+      const modal = document.getElementById("popup");
+      modal.classList.add("opacity-0", "pointer-events-none");
+      modal.querySelector(".transform").classList.remove("scale-100");
+      modal.querySelector(".transform").classList.add("scale-95");
+    }
+
+
+    // ================= CATEGORY MANAGERS =================
+    function changeCategory(val) {
+      currentCategory = val;
+      restart();
+    }
+
+
+    // ================= GAME OVER POPUPS =================
+    function triggerGameOver(isWin) {
+      const popup = document.getElementById("gameOverPopup");
+      const title = document.getElementById("gameOverTitle");
+      const msg = document.getElementById("gameOverMsg");
+      const emoji = document.getElementById("gameOverEmoji");
+      
+      if (isWin) {
+        AudioEngine.play('victory');
+        emoji.innerText = "🏆";
+        title.innerText = "Luar Biasa! Selesai!";
+        msg.innerText = "Kamu berhasil menghubungkan seluruh ubin dan mempelajari semua kosakata di kategori ini!";
+        score += timeLeft * 2; // Bonus points for remaining time
+      } else {
+        AudioEngine.play('gameover');
+        emoji.innerText = "⏰";
+        title.innerText = "Waktu Habis!";
+        msg.innerText = "Sayang sekali waktu belajar kamu habis. Ayo coba lagi untuk mengasah kemampuan memori kamu!";
+      }
+
+      document.getElementById("finalScore").innerText = score;
+      document.getElementById("finalTime").innerText = timeLeft + "s";
+
+      popup.classList.remove("opacity-0", "pointer-events-none");
+    }
+
+    function closeGameOverPopup() {
+      document.getElementById("gameOverPopup").classList.add("opacity-0", "pointer-events-none");
+    }
+
+
+    // ================= STUDY LIBRARY / DICTIONARY =================
+    function openLibrary() {
+      document.getElementById("landingPage").classList.add("hidden");
+      document.getElementById("gameUI").classList.add("hidden");
+      document.getElementById("libraryPage").classList.remove("hidden");
+      document.getElementById("libraryPage").classList.add("flex");
+      
+      buildLibraryGrid();
+    }
+
+    function closeLibrary() {
+      document.getElementById("libraryPage").classList.remove("flex");
+      document.getElementById("libraryPage").classList.add("hidden");
+      document.getElementById("landingPage").classList.remove("hidden");
+      document.getElementById("landingPage").classList.add("flex");
+    }
+
+    function buildLibraryGrid() {
+      const grid = document.getElementById("libraryGrid");
+      grid.innerHTML = "";
+
+      const activeCategory = document.getElementById("libCategorySelect").value;
+      const searchKey = document.getElementById("libSearchInput").value.toLowerCase();
+
+      let targetKeys = activeCategory === "all" ? Object.keys(categories) : [activeCategory];
+
+      targetKeys.forEach(catKey => {
+        categories[catKey].forEach(item => {
+          // Check Search Match
+          if (searchKey && !item.en.toLowerCase().includes(searchKey) && !item.id.toLowerCase().includes(searchKey)) {
+            return;
+          }
+
+          const card = document.createElement("div");
+          card.className = "p-5 bg-white border border-slate-200 hover:border-indigo-200 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between items-start text-left gap-3 relative overflow-hidden group";
+          
+          card.innerHTML = `
+            <div class="flex justify-between items-start w-full">
+              <span class="text-4xl filter drop-shadow-sm">${item.icon}</span>
+              <button onclick="speak('${item.en.replace("'", "\\'")}')" class="w-8 h-8 rounded-full bg-indigo-50 hover:bg-indigo-100 flex items-center justify-center text-indigo-600 transition-colors">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+            <div>
+              <h4 class="text-lg font-extrabold text-slate-800 capitalize leading-snug">${item.en}</h4>
+              <p class="text-sm text-indigo-600 font-bold leading-none">${item.id}</p>
+            </div>
+            <div class="w-full bg-slate-50 p-3 rounded-xl border border-slate-100/80 text-[11px] text-slate-500 italic">
+              "${item.sent}"
+              <p class="text-[10px] text-slate-400 not-italic mt-1">${item.trans}</p>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      });
+
+      if (grid.children.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <i class="fa-solid fa-magnifying-glass text-3xl mb-2"></i>
+            <p>Tidak ada kosakata yang cocok dengan pencarian Anda.</p>
+          </div>
+        `;
+      }
+    }
+
+    function filterLibrary() {
+      buildLibraryGrid();
+    }
+  </script>
+</body>
+</html>
